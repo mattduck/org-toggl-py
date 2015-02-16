@@ -208,7 +208,7 @@ class TogglTimeEntry(object):
             'stop': self.end_datetime.isoformat(),
         }
         if self.tid:
-            params['tid'] = self.pid
+            params['tid'] = self.tid
 
         delta = self.end_datetime - self.start_datetime
         params['duration'] = delta.total_seconds()
