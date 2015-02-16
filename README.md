@@ -5,32 +5,35 @@ org-mode CLOCK entries.
 
 I've implemented this (mostly) in Python because it's easy to develop / run as a
 cron job. You first export the full results of org-elements-parse-buffer from
-Emacs as a JSON file, then the Python script walks through the JSON tree and
-sends the relevant data to the Toggl API.
+Emacs as a JSON file, then use the Python script to send the relevant data from
+the JSON file to the Toggl API.
 
 
 # Usage
 
-`python org-toggl.py <path_to_config>`. The configuration file is a required
-argument.
+- The main command is `python org-toggl.py <path_to_config>`. The configuration
+  file is a required argument.
+
+- Toggl takes priority over org-mode: a CLOCK entry is not pushed to Toggl if
+  there is already a Toggl entry that overlaps with the CLOCK time period.
 
 
 ## Configration
 
 ```
-    [org-toggl-py]
+[org-toggl-py]
 
-    # Your Toggl API token
-    toggl_api_token = <token>
+# Your Toggl API token
+toggl_api_token = <token>
 
-    # Your Toggl workspace ID
-    toggl_wsid = <id>
+# Your Toggl workspace ID
+toggl_wsid = <id>
 
-    # Path to your org.json file
-    org_json_path = <path>
+# Path to your org.json file
+org_json_path = <path>
 
-    # CLOCK entries that have a closed time older than this are skipped
-    skip_clocks_older_than_days = 7
+# CLOCK entries that have a closed time older than this are skipped
+skip_clocks_older_than_days = 7
 ```
 
 
@@ -39,7 +42,8 @@ argument.
 - *TOGGL_PID* - Toggl project ID. Currently CLOCK entries are only uploaded if
   they have a parent headline with a project ID.
 
-- *TOGGL_TID* support is partially implemented, I haven't tested it yet.
+- *TOGGL_TID* - Task ID support is partially implemented, I haven't tested it
+  yet.
 
 
 ## JSON
