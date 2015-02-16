@@ -285,7 +285,7 @@ class TogglTimeEntryAPI(object):
 
 
 def main(argv):
-    global CONFIG, PREVIOUS_RUN_DATETIME
+    global CONFIG
 
     CONFIG = ConfigParser()
     config_path = argv[0]
