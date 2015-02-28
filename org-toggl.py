@@ -113,6 +113,12 @@ class OrgNode(object):
                 self.clocks_skipped += 1
                 continue
 
+            # Ignore entries of 1 minute or less - these are likely
+            # insignificant, and they add complexity to handling existing
+            # Toggl entries.
+            if clock.properties['duration'] in ("0:00", "0:01"):
+                continue
+
             # Some nodes exist as property values and weren't parsed during
             # __init__.
             date = OrgNode(clock.properties['value'])
@@ -216,9 +222,14 @@ class TogglTimeEntry(object):
         return params
 
     def params_for_get_request(self):
+        # Allow a one-minute overlap in Toggl entries, so that if an entry
+        # starts in the same minute that another one ends, the new entry is
+        # still uploaded.
+        start = self.start_datetime
+        end = self.end_datetime - timedelta(minutes=1)
         return {
-            'start_date': self.start_datetime.isoformat(),
-            'end_date': self.end_datetime.isoformat(),
+            'start_date': start.isoformat(),
+            'end_date': end.isoformat(),
         }
 
 
@@ -232,7 +243,7 @@ class TogglTimeEntryAPI(object):
 
     def __init__(self, wsid=None, api_token=None):
         self.api_token = api_token or CONFIG.get(
-                'org-toggl-py', 'toggl_api_token')
+            'org-toggl-py', 'toggl_api_token')
         self.wsid = wsid or CONFIG.get('org-toggl-py', 'toggl_wsid')
 
     def _raise_if_error(self, r, resp_data):
