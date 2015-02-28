@@ -214,13 +214,14 @@ class TogglTimeEntry(object):
 
     def params_for_create_request(self):
         params = {
-            'pid': self.pid,
             'description': self.description,
             'start': self.start_datetime.isoformat(),
             'stop': self.end_datetime.isoformat(),
         }
         if self.tid:
             params['tid'] = self.tid
+        if self.pid and self.pid not in ("t", True, "True", "true"):
+            params['pid'] = self.pid
 
         delta = self.end_datetime - self.start_datetime
         params['duration'] = delta.total_seconds()

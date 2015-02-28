@@ -45,8 +45,10 @@ timezone = <pytz-compatible value>
 
 ## Org-mode headline properties
 
-- *TOGGL_PID* - Toggl project ID. Currently CLOCK entries are only uploaded if
-  they have a parent headline with a project ID.
+- *TOGGL_PID* - If this value is a Toggl project ID, the entry will be assigned
+  to that project. If this value is "t", the entry will be pushed to Toggl
+  without a project. CLOCK entries are only uploaded if *TOGGL_PID* has one of
+  these values.
 
 - *TOGGL_TID* - Task ID support is partially implemented, I haven't tested it
   yet.
