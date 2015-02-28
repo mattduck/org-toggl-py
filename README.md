@@ -37,6 +37,9 @@ org_json_path = <path>
 
 # CLOCK entries that have a closed time older than this are skipped
 skip_clocks_older_than_days = 7
+
+# Timezone - optional (default=GMT)
+timezone = <pytz-compatible value>
 ```
 
 
