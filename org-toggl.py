@@ -154,7 +154,7 @@ class OrgNode(object):
             while parent:
                 if parent.org_type == 'headline':
                     this_headline = parent.properties['raw-value']
-                    if this_headline != "Archive":
+                    if this_headline.lower() != "archive":
                         headlines.append(this_headline)
                     if ('TOGGL_TID' in parent.properties) and (not toggl_tid):
                         toggl_tid = parent.properties['TOGGL_TID']
