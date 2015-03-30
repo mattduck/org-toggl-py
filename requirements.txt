@@ -1,2 +1,2 @@
 requests==2.5.1
-pytz=2014.10
+tzlocal==1.1.2

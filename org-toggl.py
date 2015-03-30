@@ -9,14 +9,14 @@ import logging
 import urllib
 
 import requests
-import pytz
+from tzlocal import get_localzone
 
 
 CONFIG = None
 
 # Toggl requires ISO-conforming timestamps, but datetime doesn't include
 # the ISO-mandated timezone.
-TIMEZONE = pytz.timezone('GMT')
+TIMEZONE = get_localzone()
 
 LOG = logging.getLogger(__name__)
 LOG.setLevel(logging.DEBUG)
@@ -28,8 +28,6 @@ LOG.addHandler(h)
 
 
 def setup_config(config_obj, config_path):
-    global TIMEZONE
-
     config_obj.read(config_path)
     assert config_obj.has_option('org-toggl-py', 'toggl_api_token')
     assert config_obj.has_option('org-toggl-py', 'toggl_wsid')
@@ -40,9 +38,6 @@ def setup_config(config_obj, config_path):
     if days < 1:
         days = 30
     config_obj.set('org-toggl-py', 'skip_clocks_older_than_days', str(days))
-
-    if config_obj.has_option('org-toggl-py', 'timezone'):
-        TIMEZONE = pytz.timezone(config_obj.get('org-toggl-py', 'timezone'))
     return None
 
 
