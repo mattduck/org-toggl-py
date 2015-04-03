@@ -14,8 +14,14 @@ from tzlocal import get_localzone
 
 CONFIG = None
 
-# Toggl requires ISO-conforming timestamps, but datetime doesn't include
-# the ISO-mandated timezone.
+# Toggl requires ISO-conforming timestamps that include a timezone, but
+# datetime doesn't include any concrete tzinfo classes. We use
+# tzlocal to get the system local timezone, assuming that this is the timezone
+# used by (1) your Org-mode timestamps and (2) your Toggl profile.
+#
+# NOTE: tzlocal uses pytz, which (for timezones with daylight saving
+# transitions) doesn't work if you pass the timezone as a `tzinfo` kwarg to
+# `datetime()`. You must use the pytz `localize()` method instead.
 TIMEZONE = get_localzone()
 
 LOG = logging.getLogger(__name__)
@@ -122,17 +128,16 @@ class OrgNode(object):
             # Some nodes exist as property values and weren't parsed during
             # __init__.
             date = OrgNode(clock.properties['value'])
-
             end_datetime = datetime(
                 date.properties['year-end'],
                 date.properties['month-end'],
                 date.properties['day-end'],
                 date.properties['hour-end'],
                 date.properties['minute-end'],
-                tzinfo=TIMEZONE,
             )
+            end_datetime = TIMEZONE.localize(end_datetime)
 
-            # Skip clocks that user has decided are too old, to limit API
+            # Skip clocks that the user has decided are too old, to limit API
             # requests.
             days = int(CONFIG.get(
                 'org-toggl-py', 'skip_clocks_older_than_days'))
@@ -176,8 +181,8 @@ class OrgNode(object):
                 date.properties['day-start'],
                 date.properties['hour-start'],
                 date.properties['minute-start'],
-                tzinfo=TIMEZONE,
             )
+            start_datetime = TIMEZONE.localize(start_datetime)
 
             toggl_entry = TogglTimeEntry(
                 raw_value=date.properties['raw-value'],
@@ -220,6 +225,7 @@ class TogglTimeEntry(object):
 
         delta = self.end_datetime - self.start_datetime
         params['duration'] = delta.total_seconds()
+        LOG.debug('Entry params for create request: %s' % params)
         return params
 
     def params_for_get_request(self):
