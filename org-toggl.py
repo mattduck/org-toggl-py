@@ -37,7 +37,6 @@ def setup_config(config_obj, config_path):
     config_obj.read(config_path)
     assert config_obj.has_option('org-toggl-py', 'toggl_api_token')
     assert config_obj.has_option('org-toggl-py', 'toggl_wsid')
-    assert config_obj.has_option('org-toggl-py', 'org_json_path')
     assert config_obj.has_option('org-toggl-py', 'skip_clocks_older_than_days')
 
     days = int(config_obj.get('org-toggl-py', 'skip_clocks_older_than_days'))
@@ -101,8 +100,7 @@ class OrgNode(object):
             node = thing
 
             # User flag
-            if node.org_type == 'headline' and node.properties.get(
-                    'TOGGL_IGNORE'):
+            if node.org_type == 'headline' and node.properties.get('TOGGL_IGNORE'):
                 continue
 
             # Recursive
@@ -310,9 +308,9 @@ def main(argv):
     config_path = argv[0]
     setup_config(CONFIG, config_path)
 
-    org_json_file = os.path.abspath(CONFIG.get('org-toggl-py', 'org_json_path'))
+    # For now org-toggl-py handles one org JSON file
+    org_json_file = os.path.abspath(argv[1])
 
-    # For now org-toggl-py handles one org file per config file
     LOG.info('Processing org JSON file: %s ...', org_json_file)
 
     org_json = json.loads(open(org_json_file).read())

@@ -1,18 +1,31 @@
 # org-toggl-py
 
 Create [Toggl time tracking](https://www.toggl.com) entries from Emacs
-org-mode CLOCK entries.
+org-mode CLOCK entries, by assigning `TOGGL_PID` and `TOGGL_TID` properties to
+your org headings.
 
-I've implemented this (mostly) in Python because it's easy to develop / run as a
-cron job. You first export the full results of org-elements-parse-buffer from
-Emacs as a JSON file, then use the Python script to send the relevant data from
-the JSON file to the Toggl API.
+See below for how to use the `org-toggl.sh` script. The command runs Emacs from
+the CLI and exports your org data as a JSON file to "$original_path.org.json". It
+then processes the JSON in Python and uploads the relevant data to the Toggl
+API. I've implemented like this beacuse it's easy to develop and script / run as
+a cron job.
 
 
-# Usage
+## Usage
 
-- The main command is `python org-toggl.py <path_to_config>`. The configuration
-  file is a required argument.
+- The main command is `org_toggl.sh <config_path> <org_file_path> [<extra_emacs_files_to_load> ...]`.
+
+  - `config_path`: Path to an org-toggl configuration file, described below.
+
+  - `org_file_path`: The org file to be processed for Toggl entries.
+
+  - `extra_emacs_files_to_load`: Before exporting the org file, optionally load
+    these files in Emacs, in the given order. You can use this to eg. load some
+    custom org-mode setup so your files are exported with the correct keywords.
+
+- You can also load `org-export-json.el`, which provides an `org-export-json`
+  function to export the current org file, and then call `org-toggl.py
+  <config_file> <org_json_file>` manually.
 
 - Toggl takes priority over org-mode: a CLOCK entry is not pushed to Toggl if
   there is already a Toggl entry that *starts* within the CLOCK time period.
@@ -21,7 +34,7 @@ the JSON file to the Toggl API.
     *are* allowed, because that can naturally occur in org-mode.
 
 
-## Configration
+## Configuration
 
 ```
 [org-toggl-py]
@@ -31,9 +44,6 @@ toggl_api_token = <token>
 
 # Your Toggl workspace ID
 toggl_wsid = <id>
-
-# Path to your org.json file
-org_json_path = <path>
 
 # CLOCK entries that have a closed time older than this are skipped
 skip_clocks_older_than_days = 7
