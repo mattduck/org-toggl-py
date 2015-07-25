@@ -5,10 +5,18 @@ org-mode CLOCK entries, by assigning `TOGGL_PID` and `TOGGL_TID` properties to
 your org headings.
 
 See below for how to use the `org-toggl.sh` script. The command runs Emacs from
-the CLI and exports your org data as a JSON file to "$original_path.org.json". It
+the CLI and exports your org data as a JSON file to `$original_path.org.json`. It
 then processes the JSON in Python and uploads the relevant data to the Toggl
-API. I've implemented like this beacuse it's easy to develop and script / run as
-a cron job.
+API. I've implemented it like this beacuse it's easy to develop and automate / run
+as a cron job.
+
+
+## Installation
+
+- `pip install -r requirements.txt` to install the Python dependencies.
+
+- Emacs should have the `json.el` library installed. This is part of GNU Emacs
+  since 23.1 (2008).
 
 
 ## Usage
@@ -22,10 +30,6 @@ a cron job.
   - `extra_emacs_files_to_load`: Before exporting the org file, optionally load
     these files in Emacs, in the given order. You can use this to eg. load some
     custom org-mode setup so your files are exported with the correct keywords.
-
-- You can also load `org-export-json.el`, which provides an `org-export-json`
-  function to export the current org file, and then call `org-toggl.py
-  <config_file> <org_json_file>` manually.
 
 - Toggl takes priority over org-mode: a CLOCK entry is not pushed to Toggl if
   there is already a Toggl entry that *starts* within the CLOCK time period.
@@ -52,21 +56,30 @@ skip_clocks_older_than_days = 7
 
 ## Org-mode headline properties
 
-- *TOGGL_PID* - If this value is a Toggl project ID, the entry will be assigned
-  to that project. If this value is "t", the entry will be pushed to Toggl
-  without a project. CLOCK entries are only uploaded if *TOGGL_PID* has one of
+- `TOGGL_PID` - If this value is a Toggl project ID, the entry will be assigned
+  to that project. If this value is `t`, the entry will be pushed to Toggl
+  without a project. CLOCK entries are only uploaded if `TOGGL_PID` has one of
   these values.
 
-- *TOGGL_TID* - Task ID support is partially implemented, I haven't tested it
+  - Property values are inherited: you can set this on a parent
+    headline representing a project on Toggl, and all child headlines will have
+    their CLOCK values uploaded.
+
+- `TOGGL_TID` - Task ID support is partially implemented, I haven't tested it
   yet.
+
+- `TOGGL_IGNORE` - If a parent headline has a `TOGGL_PID` or `TOGGL_TID` set,
+  you can assign `TOGGL_IGNORE` to any value to ignore processing for a
+  headline and its children.
 
 
 ## JSON
 
-The `org-export-json` function in org-export-json.el can be used to export an
+The `org-export-json` function in `org-export-json.el` can be used to export an
 org-mode buffer from Emacs to a JSON file. This is adapted from a post on the
 org-mode mailing list by Brett Viren:
 https://lists.gnu.org/archive/html/emacs-orgmode/2014-01/msg00338.html.
 
 Run the function `org-export-json` to export the current org-mode buffer to
-`$file.org.json`, then you can run `org-toggl.py` on the JSON file.
+`$file.org.json`. You can then run `org-toggl.py <config_path> <json_path>`
+manually.
