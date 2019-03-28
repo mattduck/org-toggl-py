@@ -4,7 +4,7 @@ import os
 import sys
 import json
 from datetime import datetime, timedelta
-from ConfigParser import ConfigParser
+from configparser import ConfigParser
 import logging
 import urllib
 
@@ -279,7 +279,7 @@ class TogglTimeEntryAPI(object):
     def get(self, url, params):
         headers = {'content-type': 'application/json'}
         auth = (self.api_token, 'api_token')
-        url = url + '?' + urllib.urlencode(params)
+        url = url + '?' + urllib.parse.urlencode(params)
         LOG.debug('Sending GET request: %s', url)
         r = requests.get(url, headers=headers, auth=auth)
         resp_data = r.json()
