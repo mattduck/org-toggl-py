@@ -21,4 +21,4 @@ emacs -batch -l $THIS_PATH/"org-export-json.el" -f "cli-org-export-json" "$org_f
 
 # Process json and upload to toggl
 org_json_file=$org_file.json
-python org-toggl.py "$config_file" "$org_json_file"
+python $THIS_PATH/org-toggl.py "$config_file" "$org_json_file"
