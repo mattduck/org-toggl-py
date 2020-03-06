@@ -1,3 +1,5 @@
+*2020-03-06: I haven't actively used this for a few years now, but it is apparently still working. I'm happy to merge in any fixes or sensible-looking changes.*
+
 # org-toggl-py
 
 Create [Toggl time tracking](https://www.toggl.com) entries from Emacs
@@ -83,3 +85,8 @@ https://lists.gnu.org/archive/html/emacs-orgmode/2014-01/msg00338.html.
 Run the function `org-export-json` to export the current org-mode buffer to
 `$file.org.json`. You can then run `org-toggl.py <config_path> <json_path>`
 manually.
+
+
+## Changelog
+
+- [2020-03-06] #2: @DanielRichtmann Added Python 3 compatibility and fixed issue #1.
